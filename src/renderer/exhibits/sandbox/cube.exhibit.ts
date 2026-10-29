@@ -6,7 +6,7 @@ export class CubeExhibit extends Exhibit {
   private cubeMesh: THREE.Mesh;
 
   // 2. Added the 'asset' parameter to satisfy your ExhibitBuilder signature
-  public constructor(sourceUrl: string, rawAsset: unknown) {
+  public constructor(sourceUrl: string, _rawAsset: unknown) {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: 0xf59e0b });
     const mesh = new THREE.Mesh(geometry, material);

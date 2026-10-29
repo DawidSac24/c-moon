@@ -25,7 +25,7 @@ window.addEventListener("resize", () => {
   }
 });
 
-let activeScene: Scene = null;
+let activeScene: Scene | null = null;
 
 SceneManager.getInstance()
   .acquireScene("sandbox-scene", async () => {

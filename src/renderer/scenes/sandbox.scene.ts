@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { ExhibitBuilder } from "../builders/exhibit.builder";
 import { CubeExhibit } from "../exhibits/sandbox/cube.exhibit";
 import { Scene } from "./scene";
 
