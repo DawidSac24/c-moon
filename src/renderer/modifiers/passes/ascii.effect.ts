@@ -1,4 +1,3 @@
-// /src/engine/modifiers/passes/ascii.effect.ts
 import * as THREE from "three";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import type { PostProcessEffect } from "./post-process-effect.interface";

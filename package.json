@@ -1,13 +1,18 @@
 {
   "name": "c-moon",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build:wasm": "emcc src/physics/main.cpp -o public/physics.js -s WASM=1",
+    "build": "npm run build:wasm"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "devDependencies": {
+    "@types/three": "^0.186.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21"
+  },
+  "peerDependencies": {
+    "three": "^0.160.1"
+  }
 }
