@@ -2,6 +2,14 @@ import * as THREE from "three";
 import { SceneManager } from "../src/renderer/core/scene.manager.ts"; // Adjust path as needed
 import { Scene } from "../src/index";
 import { SandboxScene } from "../src/renderer/scenes/sandbox.scene";
+import { PhysicsEngine } from "../src/physics-core/ts/PhysicsEngine.ts";
+
+const physics = new PhysicsEngine();
+
+physics.init().then(() => {
+  const result = physics.testAdd(5, 7);
+  console.log(`C++ calculated: 5 + 7 = ${result}`);
+});
 
 // const physics = new PhysicsEngine();
 // physics.init().then(() => {
