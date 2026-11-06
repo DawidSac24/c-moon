@@ -1,14 +1,14 @@
-#include "add.h"
-
-#include <iostream>
+#include "./include/core/Simulation.hpp"
+#include "./include/core/RigidBody.hpp"
 
 int main() {
-  const int result = add(2, 3);
-  if (result != 5) {
-    std::cerr << "Expected 2 + 3 to equal 5, got " << result << '\n';
-    return 1;
-  }
+    Simulation simulation;
+    simulation.addBody(new RigidBody(1));
+    simulation.addBody(new RigidBody({3, 3, 3}, 100));
 
-  std::cout << "2 + 3 = " << result << '\n';
-  return 0;
+    for (int i = 0; i < 100; ++i) {
+        simulation.tick(1);
+    }
+
+    return 0;
 }

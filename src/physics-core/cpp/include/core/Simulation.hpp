@@ -4,12 +4,11 @@
 
 #ifndef ENGINE_SIMULATION_HPP
 #define ENGINE_SIMULATION_HPP
+
 #include <memory>
 #include <vector>
 
 #include "RigidBody.hpp"
-
-#endif //ENGINE_SIMULATION_HPP
 
 class Simulation {
 public:
@@ -17,8 +16,20 @@ public:
 
     ~Simulation() = default;
 
-    void tick(u_int64_t deltaTime);
+    void tick(int deltaTime);
+
+    void addBody(RigidBody *body);
+
+    // void removeBody(RigidBody *body);
 
 private:
     std::vector<std::unique_ptr<RigidBody> > bodies_;
+
+    void clearBodiesNetForces() const;
+
+    void calculateGravitationalForce();
+
+    void updatePositions(int deltaTime) const;
 };
+
+#endif //ENGINE_SIMULATION_HPP

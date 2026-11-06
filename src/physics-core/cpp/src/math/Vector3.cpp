@@ -2,25 +2,19 @@
 // Created by dawid on 10/29/26.
 //
 
-#include "Vector3.hpp"
+#include "../../include/math/Vector3.hpp"
 
-Vector3 Vector3::operator+(const Vector3 &other) const {
-    return {x + other.x, y + other.y, z + other.z};
+void Vector3::clear() {
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
 }
 
-Vector3 Vector3::operator-(const Vector3 &other) const {
-    return {x - other.x, y - other.y, z - other.z};
+double Vector3::length() const {
+    return std::sqrt(x * x + y * y + z * z);
 }
 
-Vector3 Vector3::operator*(float scalar) const {
-    return {x * scalar, y * scalar, z * scalar};
-}
-
-Vector3 Vector3::operator/(float scalar) const {
-    return {x / scalar, y / scalar, z / scalar};
-}
-
-float Vector3::dot(const Vector3 &other) const {
+double Vector3::dot(const Vector3 &other) const {
     return x * other.x + y * other.y + z * other.z;
 }
 
@@ -32,19 +26,50 @@ Vector3 Vector3::cross(const Vector3 &other) const {
     };
 }
 
-float Vector3::magnitude() const {
-    return std::sqrt(x * x + y * y + z * z);
-}
-
-float Vector3::magnitudeSquared() const {
+double Vector3::magnitudeSquared() const {
     return x * x + y * y + z * z;
 }
 
-void Vector3::normalize() {
+Vector3 Vector3::abs() const {
+    return {std::abs(x), std::abs(y), std::abs(z)};
+}
+
+Vector3 Vector3::normalized() {
+    Vector3 res = *this;
     float len = length();
     if (len > 0) {
-        x /= len;
-        y /= len;
-        z /= len;
+        res.x /= len;
+        res.y /= len;
+        res.z /= len;
     }
+    return res;
+}
+
+
+Vector3 Vector3::operator+(const Vector3 &other) const {
+    return {x + other.x, y + other.y, z + other.z};
+}
+
+void Vector3::operator+=(const Vector3 &other) {
+    x += other.x;
+    y += other.y;
+    z += other.z;
+}
+
+Vector3 Vector3::operator-(const Vector3 &other) const {
+    return {x - other.x, y - other.y, z - other.z};
+}
+
+void Vector3::operator-=(const Vector3 &other) {
+    x -= other.x;
+    y -= other.y;
+    z -= other.z;
+}
+
+Vector3 Vector3::operator*(double scalar) const {
+    return {x * scalar, y * scalar, z * scalar};
+}
+
+Vector3 Vector3::operator/(double scalar) const {
+    return {x / scalar, y / scalar, z / scalar};
 }

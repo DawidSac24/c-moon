@@ -11,44 +11,44 @@ async function Module(moduleArg = {}) {
   // "30.0.0" -> 300000
   function humanReadableVersionToPacked(str) {
     str = str.split('-')[0]; // Remove any trailing part from e.g. "12.53.3-alpha"
-    let vers = str.split('.').slice(0, 3);
+    var vers = str.split('.').slice(0, 3);
     while(vers.length < 3) vers.push('00');
     vers = vers.map((n, i, arr) => n.padStart(2, '0'));
     return vers.join('');
   }
   // 300000 -> "30.0.0"
-  const packedVersionToHumanReadable = n => [n / 10_000 | 0, (n / 100 | 0) % 100, n % 100].join('.');
+  var packedVersionToHumanReadable = n => [n / 10_000 | 0, (n / 100 | 0) % 100, n % 100].join('.');
 
-  const TARGET_NOT_SUPPORTED = 2147483647;
+  var TARGET_NOT_SUPPORTED = 2147483647;
 
   // Note: We use a typeof check here instead of optional chaining using
   // globalThis because older browsers might not have globalThis defined.
 
   // We skip the node version checking when running on Bun/Deno since the node
   // version they report doesn't seem to be useful.
-  if (typeof process !== 'undefined' && !process.versions?.bun && typeof Deno === "undefined") {
-    const currentNodeVersion = process.versions?.node ? humanReadableVersionToPacked(process.versions.node) : TARGET_NOT_SUPPORTED;
+  if (typeof process !== 'undefined' && !process.versions?.bun && typeof Deno == "undefined") {
+    var currentNodeVersion = process.versions?.node ? humanReadableVersionToPacked(process.versions.node) : TARGET_NOT_SUPPORTED;
     if (currentNodeVersion < 180300) {
       throw new Error(`This emscripten-generated code requires node v${ packedVersionToHumanReadable(180300) } (detected v${packedVersionToHumanReadable(currentNodeVersion)})`);
     }
   }
 
-  const userAgent = typeof navigator !== 'undefined' && navigator.userAgent;
+  var userAgent = typeof navigator !== 'undefined' && navigator.userAgent;
   if (!userAgent) {
     return;
   }
 
-  const currentSafariVersion = userAgent.includes("Safari/") && !userAgent.includes("Chrome/") && userAgent.match(/Version\/(\d+\.?\d*\.?\d*)/) ? humanReadableVersionToPacked(userAgent.match(/Version\/(\d+\.?\d*\.?\d*)/)[1]) : TARGET_NOT_SUPPORTED;
+  var currentSafariVersion = userAgent.includes("Safari/") && !userAgent.includes("Chrome/") && userAgent.match(/Version\/(\d+\.?\d*\.?\d*)/) ? humanReadableVersionToPacked(userAgent.match(/Version\/(\d+\.?\d*\.?\d*)/)[1]) : TARGET_NOT_SUPPORTED;
   if (currentSafariVersion < 150000) {
     throw new Error(`This emscripten-generated code requires Safari v${ packedVersionToHumanReadable(150000) } (detected v${currentSafariVersion})`);
   }
 
-  const currentFirefoxVersion = userAgent.match(/Firefox\/(\d+(?:\.\d+)?)/) ? parseFloat(userAgent.match(/Firefox\/(\d+(?:\.\d+)?)/)[1]) : TARGET_NOT_SUPPORTED;
+  var currentFirefoxVersion = userAgent.match(/Firefox\/(\d+(?:\.\d+)?)/) ? parseFloat(userAgent.match(/Firefox\/(\d+(?:\.\d+)?)/)[1]) : TARGET_NOT_SUPPORTED;
   if (currentFirefoxVersion < 79) {
     throw new Error(`This emscripten-generated code requires Firefox v79 (detected v${currentFirefoxVersion})`);
   }
 
-  const currentChromeVersion = userAgent.match(/Chrome\/(\d+(?:\.\d+)?)/) ? parseFloat(userAgent.match(/Chrome\/(\d+(?:\.\d+)?)/)[1]) : TARGET_NOT_SUPPORTED;
+  var currentChromeVersion = userAgent.match(/Chrome\/(\d+(?:\.\d+)?)/) ? parseFloat(userAgent.match(/Chrome\/(\d+(?:\.\d+)?)/)[1]) : TARGET_NOT_SUPPORTED;
   if (currentChromeVersion < 85) {
     throw new Error(`This emscripten-generated code requires Chrome v85 (detected v${currentChromeVersion})`);
   }
@@ -138,7 +138,7 @@ readAsync = async (filename, binary = true) => {
   // See the comment in the `readBinary` function.
   filename = isFileURI(filename) ? new URL(filename) : filename;
   var ret = fs.readFileSync(filename, binary ? undefined : 'utf8');
-  assert(binary ? Buffer.isBuffer(ret) : typeof ret === 'string');
+  assert(binary ? Buffer.isBuffer(ret) : typeof ret == 'string');
   return ret;
 };
 // end include: node_shell_read.js
@@ -283,7 +283,7 @@ var runtimeDebug = true; // Switch to false at runtime to disable logging at the
 
 // Used by XXXXX_DEBUG settings to output debug messages.
 function dbg(...args) {
-  if (!runtimeDebug && typeof runtimeDebug !== 'undefined') return;
+  if (!runtimeDebug && typeof runtimeDebug != 'undefined') return;
   // TODO(sbc): Make this configurable somehow.  Its not always convenient for
   // logging to show up as warnings.
   console.warn(...args);
@@ -291,15 +291,15 @@ function dbg(...args) {
 
 // Endianness check
 (() => {
-  const h16 = new Int16Array(1);
-  const h8 = new Int8Array(h16.buffer);
+  var h16 = new Int16Array(1);
+  var h8 = new Int8Array(h16.buffer);
   h16[0] = 0x6373;
   if (h8[0] !== 0x73 || h8[1] !== 0x63) abort('Runtime error: expected the system to be little-endian! (Run with -sSUPPORT_BIG_ENDIAN to bypass)');
 })();
 
 function consumedModuleProp(prop) {
-  let value = Module[prop];
-  const msg = `Attempt to modify \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`;
+  var value = Module[prop];
+  var msg = `Attempt to modify \`Module.${prop}\` after it has already been processed.  This can happen, for example, when code is injected via '--post-js' rather than '--pre-js'`;
   if (Array.isArray(value)) {
     value = new Proxy(value, {
       set(target, key, val) {
@@ -362,7 +362,7 @@ function unexportedRuntimeSymbol(sym) {
     Object.defineProperty(Module, sym, {
       configurable: true,
       get() {
-        let msg = `'${sym}' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the Emscripten FAQ)`;
+        var msg = `'${sym}' was not exported. add it to EXPORTED_RUNTIME_METHODS (see the Emscripten FAQ)`;
         if (isExportedByForceFilesystem(sym)) {
           msg += '. Alternatively, forcing filesystem support (-sFORCE_FILESYSTEM) can export this for you';
         }
@@ -379,7 +379,7 @@ const stackCookie2 = 0x89BACDFE;
 
 // Initializes the stack cookie. Called at the startup of main and at the startup of each thread in pthreads mode.
 function writeStackCookie() {
-  let max = _emscripten_stack_get_end();
+  var max = _emscripten_stack_get_end();
   assert((max & 3) == 0);
   // If the stack ends at address zero we write our cookies 4 bytes into the
   // stack.  This prevents interference with SAFE_HEAP and ASAN which also
@@ -402,13 +402,13 @@ function u32ToHexString(num) {
 
 function checkStackCookie() {
   if (ABORT) return;
-  let max = _emscripten_stack_get_end();
+  var max = _emscripten_stack_get_end();
   // See writeStackCookie().
   if (max == 0) {
     max += 4;
   }
-  const val1 = HEAPU32[((max)>>2)];
-  const val2 = HEAPU32[(((max)+(4))>>2)];
+  var val1 = HEAPU32[((max)>>2)];
+  var val2 = HEAPU32[(((max)+(4))>>2)];
   if (val1 != stackCookie1 || val2 != stackCookie2) {
     abort(`Stack overflow! Stack cookie has been overwritten at ${ptrToString(max)}, expected hex dwords ${u32ToHexString(stackCookie2)} and ${u32ToHexString(stackCookie1)}, but received ${u32ToHexString(val2)} ${u32ToHexString(val1)}`);
   }
@@ -449,7 +449,7 @@ assert(globalThis.Int32Array && globalThis.Float64Array && Int32Array.prototype.
 function preRun() {
   var preRun = Module['preRun'];
   if (preRun) {
-    if (typeof preRun === 'function') preRun = [preRun];
+    if (typeof preRun == 'function') preRun = [preRun];
     onPreRuns.push(...preRun);
   }
   consumedModuleProp('preRun');
@@ -478,7 +478,7 @@ function postRun() {
 
   var postRun = Module['postRun'];
   if (postRun) {
-    if (typeof postRun === 'function') postRun = [postRun];
+    if (typeof postRun == 'function') postRun = [postRun];
     onPostRuns.push(...postRun);
   }
   consumedModuleProp('postRun');
@@ -509,7 +509,18 @@ function abort(what) {
   // a trap or not based on a hidden field within the object. So at the moment
   // we don't have a way of throwing a wasm trap from JS. TODO Make a JS API that
   // allows this in the wasm spec.
-  throw new WebAssembly.RuntimeError(what);
+
+  // Suppress closure compiler warning here. Closure compiler's builtin extern
+  // definition for WebAssembly.RuntimeError claims it takes no arguments even
+  // though it can.
+  // TODO(https://github.com/google/closure-compiler/pull/3913): Remove if/when upstream closure gets fixed.
+  /** @suppress {checkTypes} */
+  var e = new WebAssembly.RuntimeError(what);
+
+  // Throw the error whether or not MODULARIZE is set because abort is used
+  // in code paths apart from instantiation where an exception is expected
+  // to be thrown when abort is called.
+  throw e;
 }
 
 // show errors on likely calls to FS when it was not included
@@ -870,10 +881,10 @@ async function createWasm() {
         name,
         fromWireType: fromWireType,
         toWireType: (destructors, value) => {
-          if (typeof value === 'number') {
+          if (typeof value == 'number') {
             value = BigInt(value);
           }
-          else if (typeof value !== 'bigint') {
+          else if (typeof value != 'bigint') {
             throw new TypeError(`Cannot convert "${embindRepr(value)}" to ${name}`);
           }
           assertIntegerRange(name, value, minRange, maxRange);
@@ -992,7 +1003,7 @@ async function createWasm() {
         name,
         fromWireType: (value) => value,
         toWireType: (destructors, value) => {
-          if (typeof value !== 'number' && typeof value !== 'boolean') {
+          if (typeof value != 'number' && typeof value != 'boolean') {
             throw new TypeError(`Cannot convert ${embindRepr(value)} to ${name}`);
           }
           // The VM will perform JS to Wasm value conversion, according to the spec:
@@ -1311,7 +1322,7 @@ async function createWasm() {
       }
   
       var fp = makeDynCaller();
-      if (typeof fp !== 'function') {
+      if (typeof fp != 'function') {
           throwBindingError(`unknown function pointer with signature ${signature}: ${rawFunction}`);
       }
       return fp;
@@ -1438,7 +1449,7 @@ async function createWasm() {
         name,
         fromWireType: fromWireType,
         toWireType: (destructors, value) => {
-          if (typeof value !== 'number' && typeof value !== 'boolean') {
+          if (typeof value != 'number' && typeof value != 'boolean') {
             throw new TypeError(`Cannot convert "${embindRepr(value)}" to ${name}`);
           }
           assertIntegerRange(name, value, minRange, maxRange);
@@ -1534,7 +1545,7 @@ async function createWasm() {
     };
   
   var stringToUTF8 = (str, outPtr, maxBytesToWrite) => {
-      assert(typeof maxBytesToWrite === 'number', 'stringToUTF8 requires a third parameter that specifies the length of the output buffer');
+      assert(typeof maxBytesToWrite == 'number', 'stringToUTF8 requires a third parameter that specifies the length of the output buffer');
       return stringToUTF8Array(str, HEAPU8, outPtr, maxBytesToWrite);
     };
   
@@ -1644,14 +1655,14 @@ async function createWasm() {
    * @return {string}
    */
   var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) => {
-      assert(typeof ptr === 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
+      assert(typeof ptr == 'number', `UTF8ToString expects a number (got ${typeof ptr})`);
       return ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : '';
     };
   
   
   var __embind_register_std_string = (rawType, name) => {
       name = AsciiToString(name);
-      const stdStringIsUTF8 = true;
+      var stdStringIsUTF8 = true;
   
       registerType(rawType, {
         name,
@@ -1681,7 +1692,7 @@ async function createWasm() {
           }
   
           var length;
-          var valueIsOfTypeString = (typeof value === 'string');
+          var valueIsOfTypeString = (typeof value == 'string');
   
           // We accept `string` or array views with single byte elements
           if (!(valueIsOfTypeString || (ArrayBuffer.isView(value) && value.BYTES_PER_ELEMENT == 1))) {
@@ -1759,7 +1770,7 @@ async function createWasm() {
   
   var stringToUTF16 = (str, outPtr, maxBytesToWrite = 0x7FFFFFFF) => {
       assert(outPtr % 2 == 0, 'pointer passed to stringToUTF16 must be 2-byte aligned');
-      assert(typeof maxBytesToWrite === 'number', 'stringToUTF16 requires a third parameter that specifies the length of the output buffer');
+      assert(typeof maxBytesToWrite == 'number', 'stringToUTF16 requires a third parameter that specifies the length of the output buffer');
       if (maxBytesToWrite < 2) return 0;
       maxBytesToWrite -= 2; // Null terminator.
       var startPtr = outPtr;
@@ -1793,7 +1804,7 @@ async function createWasm() {
   
   var stringToUTF32 = (str, outPtr, maxBytesToWrite = 0x7FFFFFFF) => {
       assert(outPtr % 4 == 0, 'pointer passed to stringToUTF32 must be 4-byte aligned');
-      assert(typeof maxBytesToWrite === 'number', 'stringToUTF32 requires a third parameter that specifies the length of the output buffer');
+      assert(typeof maxBytesToWrite == 'number', 'stringToUTF32 requires a third parameter that specifies the length of the output buffer');
       if (maxBytesToWrite < 4) return 0;
       var startPtr = outPtr;
       var endPtr = startPtr + maxBytesToWrite - 4;
@@ -1853,7 +1864,7 @@ async function createWasm() {
           return str;
         },
         toWireType: (destructors, value) => {
-          if (!(typeof value === 'string')) {
+          if (!(typeof value == 'string')) {
             throwBindingError(`Cannot pass non-string to C++ string type ${name}`);
           }
   
@@ -1985,24 +1996,24 @@ Module['FS_createPreloadedFile'] = FS.createPreloadedFile;
   if (Module['thisProgram']) thisProgram = Module['thisProgram'];
 
   // Assertions on removed incoming Module JS APIs.
-  assert(typeof Module['memoryInitializerPrefixURL'] === 'undefined', 'Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead');
-  assert(typeof Module['pthreadMainPrefixURL'] === 'undefined', 'Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead');
-  assert(typeof Module['cdInitializerPrefixURL'] === 'undefined', 'Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead');
-  assert(typeof Module['filePackagePrefixURL'] === 'undefined', 'Module.filePackagePrefixURL option was removed, use Module.locateFile instead');
-  assert(typeof Module['read'] === 'undefined', 'Module.read option was removed');
-  assert(typeof Module['readAsync'] === 'undefined', 'Module.readAsync option was removed (modify readAsync in JS)');
-  assert(typeof Module['readBinary'] === 'undefined', 'Module.readBinary option was removed (modify readBinary in JS)');
-  assert(typeof Module['setWindowTitle'] === 'undefined', 'Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)');
-  assert(typeof Module['TOTAL_MEMORY'] === 'undefined', 'Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY');
-  assert(typeof Module['ENVIRONMENT'] === 'undefined', 'Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)');
-  assert(typeof Module['STACK_SIZE'] === 'undefined', 'STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time')
+  assert(typeof Module['memoryInitializerPrefixURL'] == 'undefined', 'Module.memoryInitializerPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['pthreadMainPrefixURL'] == 'undefined', 'Module.pthreadMainPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['cdInitializerPrefixURL'] == 'undefined', 'Module.cdInitializerPrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['filePackagePrefixURL'] == 'undefined', 'Module.filePackagePrefixURL option was removed, use Module.locateFile instead');
+  assert(typeof Module['read'] == 'undefined', 'Module.read option was removed');
+  assert(typeof Module['readAsync'] == 'undefined', 'Module.readAsync option was removed (modify readAsync in JS)');
+  assert(typeof Module['readBinary'] == 'undefined', 'Module.readBinary option was removed (modify readBinary in JS)');
+  assert(typeof Module['setWindowTitle'] == 'undefined', 'Module.setWindowTitle option was removed (modify emscripten_set_window_title in JS)');
+  assert(typeof Module['TOTAL_MEMORY'] == 'undefined', 'Module.TOTAL_MEMORY has been renamed Module.INITIAL_MEMORY');
+  assert(typeof Module['ENVIRONMENT'] == 'undefined', 'Module.ENVIRONMENT has been deprecated. To force the environment, use the ENVIRONMENT compile-time option (for example, -sENVIRONMENT=web or -sENVIRONMENT=node)');
+  assert(typeof Module['STACK_SIZE'] == 'undefined', 'STACK_SIZE can no longer be set at runtime.  Use -sSTACK_SIZE at link time')
   // If memory is defined in wasm, the user can't provide it, or set INITIAL_MEMORY
-  assert(typeof Module['wasmMemory'] === 'undefined', 'Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally');
-  assert(typeof Module['INITIAL_MEMORY'] === 'undefined', 'Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically');
+  assert(typeof Module['wasmMemory'] == 'undefined', 'Use of `wasmMemory` detected.  Use -sIMPORTED_MEMORY to define wasmMemory externally');
+  assert(typeof Module['INITIAL_MEMORY'] == 'undefined', 'Detected runtime INITIAL_MEMORY setting.  Use -sIMPORTED_MEMORY to define wasmMemory dynamically');
 
   var preInit = Module['preInit'];
   if (preInit) {
-    if (typeof preInit === 'function') Module['preInit'] = preInit = [preInit];
+    if (typeof preInit == 'function') Module['preInit'] = preInit = [preInit];
     // Written as a loop so that preInit functions that themselves add more
     // preInit functions.  Is this actually needed?
     while (preInit.length > 0) {
@@ -2335,6 +2346,7 @@ missingLibrarySymbols.forEach(missingLibrarySymbol)
   'FS_currentPath',
   'FS_initialized',
   'FS_ignorePermissions',
+  'FS_filesystems',
   'FS_syncFSRequests',
   'FS_lookupPath',
   'FS_getPath',
@@ -2552,21 +2564,21 @@ var wasmMemory = makeInvalidEarlyAccess('wasmMemory');
 var wasmTable = makeInvalidEarlyAccess('wasmTable');
 
 function assignWasmExports(wasmExports) {
-  assert(typeof wasmExports['__getTypeName'] !== 'undefined', 'missing Wasm export: __getTypeName');
-  assert(typeof wasmExports['fflush'] !== 'undefined', 'missing Wasm export: fflush');
-  assert(typeof wasmExports['malloc'] !== 'undefined', 'missing Wasm export: malloc');
-  assert(typeof wasmExports['strerror'] !== 'undefined', 'missing Wasm export: strerror');
-  assert(typeof wasmExports['emscripten_stack_get_end'] !== 'undefined', 'missing Wasm export: emscripten_stack_get_end');
-  assert(typeof wasmExports['emscripten_stack_get_base'] !== 'undefined', 'missing Wasm export: emscripten_stack_get_base');
-  assert(typeof wasmExports['free'] !== 'undefined', 'missing Wasm export: free');
-  assert(typeof wasmExports['setThrew'] !== 'undefined', 'missing Wasm export: setThrew');
-  assert(typeof wasmExports['emscripten_stack_init'] !== 'undefined', 'missing Wasm export: emscripten_stack_init');
-  assert(typeof wasmExports['emscripten_stack_get_free'] !== 'undefined', 'missing Wasm export: emscripten_stack_get_free');
-  assert(typeof wasmExports['_emscripten_stack_restore'] !== 'undefined', 'missing Wasm export: _emscripten_stack_restore');
-  assert(typeof wasmExports['_emscripten_stack_alloc'] !== 'undefined', 'missing Wasm export: _emscripten_stack_alloc');
-  assert(typeof wasmExports['emscripten_stack_get_current'] !== 'undefined', 'missing Wasm export: emscripten_stack_get_current');
-  assert(typeof wasmExports['memory'] !== 'undefined', 'missing Wasm export: memory');
-  assert(typeof wasmExports['__indirect_function_table'] !== 'undefined', 'missing Wasm export: __indirect_function_table');
+  assert(typeof wasmExports['__getTypeName'] != 'undefined', 'missing Wasm export: __getTypeName');
+  assert(typeof wasmExports['fflush'] != 'undefined', 'missing Wasm export: fflush');
+  assert(typeof wasmExports['malloc'] != 'undefined', 'missing Wasm export: malloc');
+  assert(typeof wasmExports['strerror'] != 'undefined', 'missing Wasm export: strerror');
+  assert(typeof wasmExports['emscripten_stack_get_end'] != 'undefined', 'missing Wasm export: emscripten_stack_get_end');
+  assert(typeof wasmExports['emscripten_stack_get_base'] != 'undefined', 'missing Wasm export: emscripten_stack_get_base');
+  assert(typeof wasmExports['free'] != 'undefined', 'missing Wasm export: free');
+  assert(typeof wasmExports['setThrew'] != 'undefined', 'missing Wasm export: setThrew');
+  assert(typeof wasmExports['emscripten_stack_init'] != 'undefined', 'missing Wasm export: emscripten_stack_init');
+  assert(typeof wasmExports['emscripten_stack_get_free'] != 'undefined', 'missing Wasm export: emscripten_stack_get_free');
+  assert(typeof wasmExports['_emscripten_stack_restore'] != 'undefined', 'missing Wasm export: _emscripten_stack_restore');
+  assert(typeof wasmExports['_emscripten_stack_alloc'] != 'undefined', 'missing Wasm export: _emscripten_stack_alloc');
+  assert(typeof wasmExports['emscripten_stack_get_current'] != 'undefined', 'missing Wasm export: emscripten_stack_get_current');
+  assert(typeof wasmExports['memory'] != 'undefined', 'missing Wasm export: memory');
+  assert(typeof wasmExports['__indirect_function_table'] != 'undefined', 'missing Wasm export: __indirect_function_table');
   ___getTypeName = createExportWrapper('__getTypeName', wasmExports['__getTypeName'], 1);
   _fflush = createExportWrapper('fflush', wasmExports['fflush'], 1);
   _malloc = createExportWrapper('malloc', wasmExports['malloc'], 1);

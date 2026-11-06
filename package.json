@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:wasm": "mkdir -p src/physics-core/wasm && em++ src/physics-core/cpp/src/*.cpp src/physics-core/cpp/bindings.cpp -I src/physics-core/cpp/include -o src/physics-core/wasm/physics.js --bind -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node",
-    "test:physics": "mkdir -p build && g++ -std=c++17 -Wall -Wextra -Werror src/physics-core/add.cpp src/physics-core/test.cpp -o build/physics-core-test && build/physics-core-test",
+    "build:wasm": "mkdir -p src/physics-core/wasm && em++ src/physics-core/cpp/src/add.cpp src/physics-core/cpp/src/core/*.cpp src/physics-core/cpp/src/forces/*.cpp src/physics-core/cpp/src/math/*.cpp src/physics-core/cpp/bindings.cpp -I src/physics-core/cpp/include -o src/physics-core/wasm/physics.js --bind -sMODULARIZE=1 -sEXPORT_ES6=1 -sENVIRONMENT=web,worker,node",
+    "test:physics": "mkdir -p build && g++ -std=c++17 -Wall -Wextra -Werror src/physics-core/cpp/src/add.cpp src/physics-core/cpp/src/core/*.cpp src/physics-core/cpp/src/forces/*.cpp src/physics-core/cpp/src/math/*.cpp src/physics-core/cpp/test.cpp -I src/physics-core/cpp/include -o build/physics-core-test && build/physics-core-test",
     "build": "npm run build:wasm"
   },
   "devDependencies": {

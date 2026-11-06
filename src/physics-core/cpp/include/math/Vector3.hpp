@@ -4,33 +4,38 @@
 
 class Vector3 {
 public:
-    float x, y, z;
+    double x, y, z;
 
     Vector3() : x(0), y(0), z(0) {
     }
 
-    Vector3(float x, float y, float z) : x(x), y(y), z(z) {
+    Vector3(double x, double y, double z) : x(x), y(y), z(z) {
     }
 
-    Vector3 operator+(const Vector3 &other) const;
+    void clear();
 
-    Vector3 operator-(const Vector3 &other) const;
+    double length() const;
 
-    Vector3 operator*(float scalar) const;
-
-    Vector3 operator/(float scalar) const;
-
-    float dot(const Vector3 &other) const;
+    double dot(const Vector3 &other) const;
 
     Vector3 cross(const Vector3 &other) const;
 
-    float magnitude() const;
+    double magnitudeSquared() const;
 
-    float magnitudeSquared() const;
+    Vector3 abs() const;
 
-    float length() const {
-        return std::sqrt(x * x + y * y + z * z);
-    }
+    Vector3 normalized();
 
-    void normalize();
+
+    Vector3 operator+(const Vector3 &other) const;
+
+    void operator+=(const Vector3 &other);
+
+    Vector3 operator-(const Vector3 &other) const;
+
+    void operator-=(const Vector3 &other);
+
+    Vector3 operator*(double scalar) const;
+
+    Vector3 operator/(double scalar) const;
 };
